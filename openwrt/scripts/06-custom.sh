@@ -10,3 +10,7 @@ git clone https://$github/sbwml/openwrt-alist package/new/alist
 # lrzsz - add patched package
 rm -rf feeds/packages/utils/lrzsz
 git clone https://$github/sbwml/packages_utils_lrzsz package/new/lrzsz
+
+
+# alist - add new package
+git clone https://$github/vernesong/OpenClash  package/new/openclash
