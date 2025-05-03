@@ -85,7 +85,7 @@ CONFIG_OPENSSL_OPTIMIZE_SPEED=y
 CONFIG_OPENSSL_WITH_ASM=y
 CONFIG_PACKAGE_libopenssl-afalg=y
 CONFIG_PACKAGE_libopenssl-conf=y
-CONFIG_PACKAGE_libopenssl-devcrypto=y
+CONFIG_PACKAGE_libopenssl-devcrypto=n
 CONFIG_PACKAGE_libopenssl-legacy=y
 CONFIG_PACKAGE_openssl-util=y
 # CONFIG_PACKAGE_libopenssl-padlock is not set
