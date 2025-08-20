@@ -36,6 +36,9 @@ jobs:
     - name: Set time zone
       run: sudo timedatectl set-timezone 'Asia/Shanghai'
 
+    - name: Generate timestamp
+      run: echo "BUILD_TIMESTAMP=$(date +%Y%m%d-%H%M)" >> "$GITHUB_ENV"
+
     - name: Show system
       run: |
         lscpu
@@ -126,10 +129,10 @@ jobs:
       continue-on-error: true
       uses: ncipollo/release-action@v1.20.0
       with:
-        name: ${{ matrix.tag.version }}
-        allowUpdates: true
+        name: ${{ matrix.tag.version }}-dev-${{ env.BUILD_TIMESTAMP }}
+        allowUpdates: false
         prerelease: true
-        tag: ${{ matrix.tag.version }}
+        tag: ${{ matrix.tag.version }}-dev-${{ env.BUILD_TIMESTAMP }}
         commit: main
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
