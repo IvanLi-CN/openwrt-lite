@@ -41,6 +41,9 @@ jobs:
     - name: Set time zone
       run: sudo timedatectl set-timezone 'Asia/Shanghai'
 
+    - name: Generate timestamp
+      run: echo "BUILD_TIMESTAMP=$(date +%Y%m%d-%H%M)" >> "$GITHUB_ENV"
+
     - name: Show system
       run: |
         lscpu
@@ -160,9 +163,9 @@ jobs:
       continue-on-error: true
       uses: ncipollo/release-action@v1.20.0
       with:
-        name: OpenWrt-23.05
-        allowUpdates: true
-        tag: openwrt-23.05
+        name: OpenWrt-23.05-${{ env.BUILD_TIMESTAMP }}
+        allowUpdates: false
+        tag: openwrt-23.05-${{ env.BUILD_TIMESTAMP }}
         body: OpenWrt 23.05 with Kernel 6.11 Enhanced
         commit: main
         replacesArtifacts: true
