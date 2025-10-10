@@ -140,12 +140,6 @@ jobs:
         fi
         for file in *.img.gz; do mv "$file" "${file%.img.gz}-thin.img.gz"; done
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.model }}-${{ matrix.tag.version }}
-        path: ${{ env.WORKDIR }}/rom/*.gz
-
     - name: Create release
       continue-on-error: true
       uses: ncipollo/release-action@v1.20.0
