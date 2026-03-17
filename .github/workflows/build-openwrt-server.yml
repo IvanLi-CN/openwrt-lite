@@ -143,7 +143,7 @@ jobs:
 
     - name: Create release
       continue-on-error: true
-      uses: ncipollo/release-action@v1.20.0
+      uses: ncipollo/release-action@v1.21.0
       with:
         name: OpenWrt-${{ env.latest_release }}
         allowUpdates: false
@@ -162,7 +162,7 @@ jobs:
     - name: Release kernel modules
       continue-on-error: true
       if: ${{ matrix.model != 'nanopi-r4s' }}
-      uses: ncipollo/release-action@v1.20.0
+      uses: ncipollo/release-action@v1.21.0
       with:
         name: ${{ matrix.tag.version }}-${{ env.BUILD_TIMESTAMP }}
         allowUpdates: false
