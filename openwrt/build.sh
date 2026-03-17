@@ -189,6 +189,10 @@ src-git routing https://$github/openwrt/routing.git;openwrt-23.05
 src-git telephony https://$github/openwrt/telephony.git;openwrt-23.05
 EOF
 
+# Add feeds
+mkdir -p feeds/packages/devel/rust-bindgen
+curl -s https://$mirror/openwrt/patch/rust-bindgen/Makefile > feeds/packages/devel/rust-bindgen/Makefile
+
 # Init feeds
 [ "$(whoami)" = "runner" ] && group "feeds update -a"
 ./scripts/feeds update -a
