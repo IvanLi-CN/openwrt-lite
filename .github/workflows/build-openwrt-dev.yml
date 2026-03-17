@@ -121,7 +121,7 @@ jobs:
 
     - name: Create release
       continue-on-error: true
-      uses: ncipollo/release-action@v1.21.0
+      uses: ncipollo/release-action@main
       with:
         name: ${{ matrix.tag.version }}-dev-${{ env.BUILD_TIMESTAMP }}
         allowUpdates: false

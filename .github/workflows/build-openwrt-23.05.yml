@@ -155,7 +155,7 @@ jobs:
 
     - name: Create release
       continue-on-error: true
-      uses: ncipollo/release-action@v1.21.0
+      uses: ncipollo/release-action@main
       with:
         name: OpenWrt-23.05-${{ env.BUILD_TIMESTAMP }}
         allowUpdates: false
