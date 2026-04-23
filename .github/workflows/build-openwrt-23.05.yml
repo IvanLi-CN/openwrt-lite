@@ -151,7 +151,14 @@ jobs:
           cd rom && sha256sum *gz > ../info/sha256sums.txt
         fi
         cd ..
-        tar zcf rom/buildinfo_${{ matrix.model }}.tar.gz info
+        tar zcf rom/buildinfo_${{ github.event.inputs.device }}.tar.gz info
+
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-23.05-custom-${{ github.event.inputs.device }}-${{ env.BUILD_TIMESTAMP }}
+        path: ${{ env.WORKDIR }}/rom/*
+        if-no-files-found: error
 
     - name: Create release
       continue-on-error: true

@@ -51,6 +51,8 @@ jobs:
         sudo mkdir -p /builder
         sudo chown -R runner:runner /builder
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
+        echo RELEASE_RUN_ID="${{ github.run_id }}" >> "$GITHUB_ENV"
+        echo RELEASE_ATTEMPT_ID="${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
 
     - name: Free disk space
       run: |
@@ -85,6 +87,7 @@ jobs:
         export GITHUB_REPO=${{ github.repository }}
         export OPENWRT_KEY=${{ secrets.OPENWRT_KEY }}
         [[ "${{ github.event.inputs.option}}" == "archive" ]] && export ARCHIVE_BUILD=y
+        echo "latest_release=${{ matrix.tag.version }}-dev-${{ env.RELEASE_ATTEMPT_ID }}" >> "$GITHUB_ENV"
         bash <(curl -sS https://raw.githubusercontent.com/pmkol/openwrt-lite/main/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
 
     - name: Extensive logs after a failed compilation
@@ -119,14 +122,21 @@ jobs:
         cd ..
         tar zcf rom/buildinfo_${{ matrix.model }}.tar.gz info
 
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-23.05-dev-${{ matrix.model }}-${{ env.RELEASE_ATTEMPT_ID }}
+        path: ${{ env.WORKDIR }}/rom/*
+        if-no-files-found: error
+
     - name: Create release
       continue-on-error: true
       uses: ncipollo/release-action@main
       with:
-        name: ${{ matrix.tag.version }}-dev-${{ env.BUILD_TIMESTAMP }}
+        name: ${{ env.latest_release }}
         allowUpdates: false
         prerelease: true
-        tag: ${{ matrix.tag.version }}-dev-${{ env.BUILD_TIMESTAMP }}
+        tag: ${{ env.latest_release }}
         commit: main
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}

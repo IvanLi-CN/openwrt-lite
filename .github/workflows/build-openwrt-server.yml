@@ -46,6 +46,8 @@ jobs:
         sudo mkdir -p /builder
         sudo chown -R runner:runner /builder
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
+        echo RELEASE_RUN_ID="${{ github.run_id }}" >> "$GITHUB_ENV"
+        echo RELEASE_ATTEMPT_ID="${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
 
     - name: Free disk space
       run: |
@@ -109,7 +111,7 @@ jobs:
         export OPENWRT_KEY=${{ secrets.OPENWRT_KEY }}
         tags=$(git ls-remote --heads https://github.com/pmkol/openwrt-source | awk -F'/' '{print $3}' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | tail -n 1)
         [ -z "$tags" ] && echo "Failed to retrieve tags. Exiting" && exit 1
-        echo "latest_release=$tags-server-${{ env.BUILD_TIMESTAMP }}" >>$GITHUB_ENV
+        echo "latest_release=$tags-server-${{ env.RELEASE_RUN_ID }}" >>$GITHUB_ENV
         bash <(curl -sS https://raw.githubusercontent.com/pmkol/openwrt-lite/main/openwrt/build.sh) ${{ matrix.tag.type }} ${{ matrix.model }}
 
     - name: Extensive logs after a failed compilation
@@ -140,14 +142,26 @@ jobs:
           cp -a openwrt/bin/targets/x86/*/config.buildinfo info/config.buildinfo
           cd rom && sha256sum *gz > ../info/sha256sums.txt
         fi
+        cd ..
+        tar zcf rom/buildinfo_${{ matrix.model }}.tar.gz info
+
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-23.05-server-${{ matrix.model }}-${{ env.RELEASE_ATTEMPT_ID }}
+        path: |
+          ${{ env.WORKDIR }}/rom/*
+          ${{ env.WORKDIR }}/openwrt/*-*.tar.gz
+        if-no-files-found: error
 
     - name: Create release
       continue-on-error: true
       uses: ncipollo/release-action@main
       with:
         name: OpenWrt-${{ env.latest_release }}
-        allowUpdates: false
+        allowUpdates: true
         tag: ${{ env.latest_release }}
+        replacesArtifacts: true
         body: |
           OpenWrt 23.05 Server with Kernel 6.11 Enhanced
 
@@ -155,7 +169,6 @@ jobs:
           Includes full-featured server packages:
           Supports Docker and Iptables, with more extensive pre-installed LuCI apps for advanced users.
         commit: main
-        replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.WORKDIR }}/rom/*
 
@@ -164,11 +177,11 @@ jobs:
       if: ${{ matrix.model != 'nanopi-r4s' }}
       uses: ncipollo/release-action@main
       with:
-        name: ${{ matrix.tag.version }}-${{ env.BUILD_TIMESTAMP }}
-        allowUpdates: false
-        tag: ${{ matrix.tag.version }}-${{ env.BUILD_TIMESTAMP }}
-        commit: main
+        name: ${{ matrix.tag.version }}-kmods-${{ env.RELEASE_RUN_ID }}
+        allowUpdates: true
+        tag: ${{ matrix.tag.version }}-kmods-${{ env.RELEASE_RUN_ID }}
         replacesArtifacts: true
+        commit: main
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: |
           ${{ env.WORKDIR }}/openwrt/*-*.tar.gz
