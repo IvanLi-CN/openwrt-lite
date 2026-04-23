@@ -151,7 +151,7 @@ jobs:
           cd rom && sha256sum *gz > ../info/sha256sums.txt
         fi
         cd ..
-        tar zcf rom/buildinfo_${{ matrix.model }}.tar.gz info
+        tar zcf rom/buildinfo_${{ github.event.inputs.device }}.tar.gz info
 
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v4
