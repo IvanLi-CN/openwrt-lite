@@ -141,6 +141,9 @@ jobs:
           cp -a openwrt/bin/targets/x86/*/config.buildinfo info/config.buildinfo
           cd rom && sha256sum *gz > ../info/sha256sums.txt
         fi
+        cd ..
+        tar zcf rom/buildinfo_${{ matrix.model }}.tar.gz info
+        cd rom
         for file in *.img.gz; do mv "$file" "${file%.img.gz}-lite.img.gz"; done
 
     - name: Upload firmware artifacts
