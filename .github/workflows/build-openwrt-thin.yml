@@ -155,6 +155,7 @@ jobs:
         name: OpenWrt-${{ env.latest_release }}
         allowUpdates: true
         tag: ${{ env.latest_release }}
+        replacesArtifacts: false
         body: |
           OpenWrt 23.05 Lite with Kernel 6.11 Enhanced
 
@@ -165,6 +166,5 @@ jobs:
           - **Thin Version**
           Includes only kernel-level features and templates.
         commit: main
-        replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.WORKDIR }}/rom/*

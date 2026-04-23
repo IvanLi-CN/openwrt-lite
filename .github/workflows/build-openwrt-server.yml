@@ -158,6 +158,7 @@ jobs:
         name: OpenWrt-${{ env.latest_release }}
         allowUpdates: true
         tag: ${{ env.latest_release }}
+        replacesArtifacts: false
         body: |
           OpenWrt 23.05 Server with Kernel 6.11 Enhanced
 
@@ -165,7 +166,6 @@ jobs:
           Includes full-featured server packages:
           Supports Docker and Iptables, with more extensive pre-installed LuCI apps for advanced users.
         commit: main
-        replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.WORKDIR }}/rom/*
 
@@ -177,8 +177,8 @@ jobs:
         name: ${{ matrix.tag.version }}-kmods-${{ env.RELEASE_RUN_ID }}
         allowUpdates: true
         tag: ${{ matrix.tag.version }}-kmods-${{ env.RELEASE_RUN_ID }}
+        replacesArtifacts: false
         commit: main
-        replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: |
           ${{ env.WORKDIR }}/openwrt/*-*.tar.gz
