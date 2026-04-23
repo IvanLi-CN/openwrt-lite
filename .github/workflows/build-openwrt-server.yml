@@ -46,7 +46,7 @@ jobs:
         sudo mkdir -p /builder
         sudo chown -R runner:runner /builder
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
-        echo RELEASE_RUN_ID="${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+        echo RELEASE_RUN_ID="${{ github.run_id }}" >> "$GITHUB_ENV"
 
     - name: Free disk space
       run: |

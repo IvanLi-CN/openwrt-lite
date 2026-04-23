@@ -44,7 +44,7 @@ jobs:
         sudo mkdir -p /builder
         sudo chown -R runner:runner /builder
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
-        echo RELEASE_RUN_ID="${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+        echo RELEASE_RUN_ID="${{ github.run_id }}" >> "$GITHUB_ENV"
 
     - name: Free disk space
       run: |
@@ -126,23 +126,21 @@ jobs:
           cp -a openwrt/bin/targets/rockchip/*/*.img.gz rom/
           cp -a openwrt/bin/targets/rockchip/*/*-r4s.manifest info/manifest.txt
           cp -a openwrt/bin/targets/rockchip/*/config.buildinfo info/config.buildinfo
-          cd rom && sha256sum *gz > ../info/sha256sums.txt
         elif [ "${{ matrix.model }}" = "nanopi-r5s" ]; then
           cp -a openwrt/bin/targets/rockchip/*/*.img.gz rom/
           cp -a openwrt/bin/targets/rockchip/*/*.manifest info/manifest.txt
           cp -a openwrt/bin/targets/rockchip/*/config.buildinfo info/config.buildinfo
-          cd rom && sha256sum *gz > ../info/sha256sums.txt
         elif [ "${{ matrix.model }}" = "x86_64" ]; then
           cp -a openwrt/bin/targets/x86/*/*-ext4-combined-efi.img.gz rom/
           cp -a openwrt/bin/targets/x86/*/*-squashfs-combined-efi.img.gz rom/
           cp -a openwrt/bin/targets/x86/*/*-x86-64-generic.manifest info/manifest.txt
           cp -a openwrt/bin/targets/x86/*/config.buildinfo info/config.buildinfo
-          cd rom && sha256sum *gz > ../info/sha256sums.txt
         fi
-        cd ..
-        tar zcf rom/buildinfo_${{ matrix.model }}.tar.gz info
         cd rom
         for file in *.img.gz; do mv "$file" "${file%.img.gz}-thin.img.gz"; done
+        sha256sum *.img.gz > ../info/sha256sums.txt
+        cd ..
+        tar zcf rom/buildinfo_${{ matrix.model }}.tar.gz info
 
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v4
