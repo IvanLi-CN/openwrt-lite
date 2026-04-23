@@ -45,6 +45,7 @@ jobs:
         sudo chown -R runner:runner /builder
         echo WORKDIR="/builder" >> "$GITHUB_ENV"
         echo RELEASE_RUN_ID="${{ github.run_id }}" >> "$GITHUB_ENV"
+        echo RELEASE_ATTEMPT_ID="${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
 
     - name: Free disk space
       run: |
@@ -145,7 +146,7 @@ jobs:
     - name: Upload firmware artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: openwrt-23.05-thin-${{ matrix.model }}-${{ env.RELEASE_RUN_ID }}
+        name: openwrt-23.05-thin-${{ matrix.model }}-${{ env.RELEASE_ATTEMPT_ID }}
         path: ${{ env.WORKDIR }}/rom/*
         if-no-files-found: error
 
@@ -156,7 +157,7 @@ jobs:
         name: OpenWrt-${{ env.latest_release }}
         allowUpdates: true
         tag: ${{ env.latest_release }}
-        replacesArtifacts: false
+        replacesArtifacts: true
         body: |
           OpenWrt 23.05 Lite with Kernel 6.11 Enhanced
 
